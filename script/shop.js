@@ -1,6 +1,19 @@
 window.onload = function(){
     let cart ={};
     let goods = {};
+
+    // делаем загрузку корзины из localStorage
+    
+    function loadCartFromStorage(){
+        // если localStorage пуст в нем храниться null, потом в него нельзя засунуть массив
+    //поэтому нужна проверка
+        if ( localStorage.getItem('cart') != undefined){
+            cart = JSON.parse( localStorage.getItem('cart'));// т.к в storage хранится строка, преобразовываем ее в массив
+        }
+        
+    }
+    loadCartFromStorage();
+
     // прдготовка к отправке запроса
     let getJSON = function(url, callback){
         // создаю новый объект
@@ -31,6 +44,7 @@ window.onload = function(){
             goods = arrayHelper(data);
             console.log(goods);// выводит элементы более удобные для чтения
             document.querySelector('.shop-field').innerHTML = showGoods(data);
+            showCart();
         }      
     });
 
@@ -103,6 +117,8 @@ function addToCart(elem){
     }
     console.log(cart);
     showCart();
+    // сохраняем содержимое таблицы в localStorage, но хранить можно только строку
+    localStorage.setItem('cart', JSON.stringify(cart));//JSON.stringify переводит массив cart в строку
 }
 
 //вспомогательная функция что бы перебрать массив data, информация будет иметь более презентаьельный вид
