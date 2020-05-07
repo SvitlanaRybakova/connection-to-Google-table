@@ -1,4 +1,6 @@
 window.onload = function(){
+    let cart ={};
+    let goods = {};
     // прдготовка к отправке запроса
     let getJSON = function(url, callback){
         // создаю новый объект
@@ -24,7 +26,10 @@ window.onload = function(){
         }
         else{
             data = data['feed']['entry'];
-            console.log(data);
+            console.log(data);// для срвнения с новым массивом goods
+
+            goods = arrayHelper(data);
+            console.log(goods);// выводит элементы более удобные для чтения
             document.querySelector('.shop-field').innerHTML = showGoods(data);
         }      
     });
@@ -38,7 +43,7 @@ window.onload = function(){
                 out +=`<h5>${data[i]['gsx$name']['$t']}</h5>`;
                 out +=`<img src="${data[i]['gsx$image']['$t']}" alt="apple">`;
                 out +=`<p class="cost">Цена: ${data[i]['gsx$cost']['$t']}</p>`;
-                out +=`<p class="cost"><button  type="button" class="btn btn-success">Купить</button></p>`;
+                out +=`<p class="cost"><button  type="button" class="btn btn-success" name = "add-to-cart" data="${data[i]['gsx$id']['$t']}">Купить</button></p>`;
                 out +=`</div>`;
                 out +=`</div>`;
             }
@@ -46,8 +51,6 @@ window.onload = function(){
         return out;
     }
     
-}
-
 // то же самое но на qjuery
 
 // $(document).ready(function () {
@@ -76,3 +79,59 @@ window.onload = function(){
 //         $('.shop-field').html(out);
 //     }
 // });
+
+
+//корзина для покупок
+
+document.onclick = function(e){
+    // привязываем кнопку к событиям
+    console.log(e.target.attributes.data.nodeValue);
+    console.log(e.target.attributes.name.nodeValue);
+    if(e.target.attributes.name.nodeValue == 'add-to-cart'){
+        addToCart(e.target.attributes.data.nodeValue);
+    }
+
+}
+
+
+function addToCart(elem){
+    if(cart[elem] !== undefined){// если внутри массива cart есть уже этот элемент, то будет добавлять+1
+        cart[elem]++;
+    }
+    else{
+        cart[elem] = 1;// усли нет, то добавляет новый
+    }
+    console.log(cart);
+    showCart();
+}
+
+//вспомогательная функция что бы перебрать массив data, информация будет иметь более презентаьельный вид
+function arrayHelper(arr){
+    let out ={};
+    for (let i = 0; i < arr.length; i++){
+        let temp = {};
+        temp['articul'] = arr[i]['gsx$articul']['$t'];
+        temp['name'] = arr[i]['gsx$name']['$t'];
+        temp['cost'] = arr[i]['gsx$cost']['$t'];
+        temp['image'] = arr[i]['gsx$image']['$t'];
+        out[ arr[i]['gsx$id']['$t']] = temp;
+    }
+    return out;
+}
+
+// отрисовываем корзину
+function showCart(){
+    let ul = document.querySelector('.cart');
+    ul.innerHTML = '';
+    let sum = 0;
+    for (let key in cart){
+        let li = '<li>';
+        li += goods[key]['name'] + ' ';
+        li += cart[key]+ ' шт';
+        li += ' ' + goods[key]['cost'] * cart[key] + ' грн.';
+        sum += goods[key]['cost'] * cart[key];
+        ul.innerHTML += li;
+    }
+    ul.innerHTML += 'Итого: ' + sum;
+}
+}
