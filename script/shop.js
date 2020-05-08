@@ -98,11 +98,38 @@ window.onload = function(){
 //корзина для покупок
 
 document.onclick = function(e){
-    // привязываем кнопку к событиям
+    // привязываем кнопку купить к событиям
     console.log(e.target.attributes.data.nodeValue);
     console.log(e.target.attributes.name.nodeValue);
     if(e.target.attributes.name.nodeValue == 'add-to-cart'){
         addToCart(e.target.attributes.data.nodeValue);
+    }
+    else if(e.target.attributes.name.nodeValue == 'delete-goods'){// привязываем кнопку удалить к событиям
+        // удаление товара из массива cart, аотом нужно удалить из корзины
+        delete cart[e.target.attributes.data.nodeValue];
+        showCart();// перерисовываем корзину
+        localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
+        console.log(cart);
+    }
+    else if(e.target.attributes.name.nodeValue == 'plus-goods'){// привязываем кнопку + к событиям
+        //увеличиваем количество товара на 1
+        cart[e.target.attributes.data.nodeValue]++;
+        showCart();// перерисовываем корзину
+        localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
+        console.log(cart);
+    }
+    else if(e.target.attributes.name.nodeValue == 'minus-goods'){// привязываем кнопку - к событиям
+        //проверка, что бы не уйти в отрицательные числа
+        if (cart[e.target.attributes.data.nodeValue] - 1 == 0){
+            delete cart[e.target.attributes.data.nodeValue];
+        }
+        else{
+            cart[e.target.attributes.data.nodeValue]--;
+        }
+        
+        showCart();// перерисовываем корзину
+        localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
+        console.log(cart);
     }
 
 }
@@ -117,6 +144,7 @@ function addToCart(elem){
     }
     console.log(cart);
     showCart();
+    
     // сохраняем содержимое таблицы в localStorage, но хранить можно только строку
     localStorage.setItem('cart', JSON.stringify(cart));//JSON.stringify переводит массив cart в строку
 }
@@ -143,11 +171,15 @@ function showCart(){
     for (let key in cart){
         let li = '<li>';
         li += goods[key]['name'] + ' ';
-        li += cart[key]+ ' шт';
-        li += ' ' + goods[key]['cost'] * cart[key] + ' грн.';
+        li += cart[key]+ ' шт ';
+        li += ` <button name="plus-goods" data="${key}">+</button>`;
+        li += ` <button name="minus-goods" data="${key}">-</button>`;
+        li +=  goods[key]['cost'] * cart[key] + ' грн.';
+        li += ` <button name="delete-goods" data="${key}">удалить</button>`;
+        li += '</li>';
         sum += goods[key]['cost'] * cart[key];
         ul.innerHTML += li;
     }
-    ul.innerHTML += 'Итого: ' + sum;
+    ul.innerHTML += 'Итого: ' + sum + ' грн.';
 }
 }
