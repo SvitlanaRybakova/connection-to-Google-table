@@ -98,29 +98,30 @@ window.onload = function(){
 //корзина для покупок
 
 document.onclick = function(e){
-    // привязываем кнопку купить к событиям
-    console.log(e.target.attributes.data.nodeValue);
-    console.log(e.target.attributes.name.nodeValue);
-    if(e.target.attributes.name.nodeValue == 'add-to-cart'){
-        addToCart(e.target.attributes.data.nodeValue);
-    }
-    else if(e.target.attributes.name.nodeValue == 'delete-goods'){// привязываем кнопку удалить к событиям
-        // удаление товара из массива cart, аотом нужно удалить из корзины
-        delete cart[e.target.attributes.data.nodeValue];
-        showCart();// перерисовываем корзину
-        localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
-        console.log(cart);
-    }
-    else if(e.target.attributes.name.nodeValue == 'plus-goods'){// привязываем кнопку + к событиям
-        //увеличиваем количество товара на 1
-        cart[e.target.attributes.data.nodeValue]++;
-        showCart();// перерисовываем корзину
-        localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
-        console.log(cart);
-    }
-    else if(e.target.attributes.name.nodeValue == 'minus-goods'){// привязываем кнопку - к событиям
-        //проверка, что бы не уйти в отрицательные числа
-        if (cart[e.target.attributes.data.nodeValue] - 1 == 0){
+    if (e.target.attributes.name != undefined){
+         // привязываем кнопку купить к событиям
+        //console.log(e.target.attributes.data.nodeValue);
+        //console.log(e.target.attributes.name.nodeValue);
+        if(e.target.attributes.name.nodeValue == 'add-to-cart'){
+            addToCart(e.target.attributes.data.nodeValue);
+        }
+        else if(e.target.attributes.name.nodeValue == 'delete-goods'){// привязываем кнопку удалить к событиям
+            // удаление товара из массива cart, аотом нужно удалить из корзины
+            delete cart[e.target.attributes.data.nodeValue];
+            showCart();// перерисовываем корзину
+            localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
+            console.log(cart);
+        }
+        else if(e.target.attributes.name.nodeValue == 'plus-goods'){// привязываем кнопку + к событиям
+            //увеличиваем количество товара на 1
+            cart[e.target.attributes.data.nodeValue]++;
+            showCart();// перерисовываем корзину
+            localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
+            console.log(cart);
+        }
+        else if(e.target.attributes.name.nodeValue == 'minus-goods'){// привязываем кнопку - к событиям
+         //проверка, что бы не уйти в отрицательные числа
+            if (cart[e.target.attributes.data.nodeValue] - 1 == 0){
             delete cart[e.target.attributes.data.nodeValue];
         }
         else{
@@ -130,6 +131,7 @@ document.onclick = function(e){
         showCart();// перерисовываем корзину
         localStorage.setItem('cart', JSON.stringify(cart));// перезаписываю состояние Storage после удаления
         console.log(cart);
+    }
     }
 
 }
